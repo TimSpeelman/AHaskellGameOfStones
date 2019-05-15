@@ -14,7 +14,7 @@ data Stone = Stone Int
     deriving (Show, Eq)
 
 
-data Player = Player Int
+data Player = Player Int deriving (Show, Eq)
 
 -- This could be a Maybe, but maybe we want to expand this with
 --   more than just stones later.

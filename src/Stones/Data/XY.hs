@@ -1,6 +1,8 @@
 module Stones.Data.XY
    where
 
+-- This needs vector arithmetic! Don't implement by yourself!
+
 data XY = XY Int Int deriving (Show, Eq)
 
 offset :: XY -> XY -> XY

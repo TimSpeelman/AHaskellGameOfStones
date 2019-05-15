@@ -16,8 +16,23 @@ stgyAggressive player grid = move
         theirStones = stonesOfEnemyOf player grid
         pair = closestPair myStones theirStones
         ((myPos, _), (theirPos, _)) = pair
-        move = Move myPos theirPos
+        nextPos = quickestTo myPos theirPos
+        move = Move myPos nextPos
         
+quickestTo :: XY -> XY -> XY
+quickestTo sourcePos@(XY x0 y0) targetPos = (XY x1 y1)
+    where -- UGLY!!
+        (XY dx dy) = offset sourcePos targetPos
+        dx' = limitToRange 1 dx
+        dy' = limitToRange 1 dy
+        x1 = x0 + dx'
+        y1 = y0 + dy'
+
+limitToRange :: Int -> Int -> Int
+limitToRange range a
+  | a > 0 = min a range
+  | a <= 0 = max a (-range)
+
 stonesOfPlayer :: Player -> StoneGrid -> [StoneXY]
 stonesOfPlayer (Player player) grid = stones
     where
