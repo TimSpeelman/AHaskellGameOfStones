@@ -36,3 +36,9 @@ mapGridXY :: (XY -> a -> b) -> Grid a -> Grid b
 mapGridXY f (Grid cells) = Grid (mapWithIndex2D f' cells)
     where
         f' = \y x a -> f (XY x y) a
+
+listWithXY :: Grid a -> [(XY, a)]
+listWithXY grid = values
+    where
+        (Grid cells') = mapGridXY (\xy a -> (xy, a)) grid
+        values = foldr (++) [] cells'

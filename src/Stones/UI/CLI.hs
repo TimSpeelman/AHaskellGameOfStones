@@ -3,11 +3,17 @@ module Stones.UI.CLI
 import Stones.Util
 import Stones.Data.Grid
 import Stones.Data.StoneGrid
+import System.Console.ANSI
 
 printGrid :: StoneGrid -> IO()
 printGrid grid = 
     putStrLn (gridToStr grid)
     
+
+clearCLI :: IO()
+clearCLI =
+    clearScreen
+
 gridToStr :: StoneGrid -> String
 gridToStr (Grid cells) = text
     where

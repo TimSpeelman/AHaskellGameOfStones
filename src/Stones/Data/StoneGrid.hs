@@ -7,10 +7,12 @@ import Stones.Data.XY
 import Stones.Util
 
 type StoneGrid = Grid CellV
+type StoneXY = (XY, Stone)
 
 -- The stone has a player id
 data Stone = Stone Int
     deriving (Show, Eq)
+
 
 data Player = Player Int
 
@@ -49,3 +51,14 @@ playerFromCell (CellS (Stone id)) = Just id
 clearCell :: StoneGrid -> XY -> StoneGrid
 clearCell grid xy =
     setXY grid EmptyCell xy
+
+listStones :: StoneGrid -> [StoneXY]
+listStones grid = stones
+    where
+        elems :: [(XY, CellV)]
+        elems = listWithXY grid
+        isStone :: (XY, CellV) -> Bool
+        isStone (_, (CellS _)) = True
+        isStone (_, _) = False
+        stones' = filter isStone elems
+        stones = map (\(xy, (CellS s)) -> (xy, s)) stones'
