@@ -10,27 +10,27 @@ import Stones.Data.Move
 
 isLawful :: StoneGrid -> Player -> Move -> Bool
 isLawful grid player move =
-    thyShallTakeButOneStep move &&
-    thyShallMoveButThyself grid player move &&
-    thyShallNotWander grid move &&
-    thyShallHitButThyFoe grid move
+    thouShallTakeButOneStep move &&
+    thouShallMoveButThyself grid player move &&
+    thouShallNotWander grid move &&
+    thouShallHitButThyFoe grid move
 
-thyShallTakeButOneStep :: Move -> Bool
-thyShallTakeButOneStep (Move sourcePos targetPos) =
+thouShallTakeButOneStep :: Move -> Bool
+thouShallTakeButOneStep (Move sourcePos targetPos) =
     d > 0 && d <= 2
     where 
         d = distanceSquared sourcePos targetPos
         
-thyShallMoveButThyself :: StoneGrid -> Player -> Move -> Bool
-thyShallMoveButThyself grid (Player playerId) (Move sourcePos _) =
+thouShallMoveButThyself :: StoneGrid -> Player -> Move -> Bool
+thouShallMoveButThyself grid (Player playerId) (Move sourcePos _) =
     getPlayerXY grid sourcePos == Just playerId
 
-thyShallNotWander :: StoneGrid -> Move -> Bool
-thyShallNotWander grid (Move sourcePos targetPos) =
+thouShallNotWander :: StoneGrid -> Move -> Bool
+thouShallNotWander grid (Move sourcePos targetPos) =
     inBounds grid targetPos
 
-thyShallHitButThyFoe :: StoneGrid -> Move -> Bool
-thyShallHitButThyFoe grid (Move sourcePos targetPos) =
+thouShallHitButThyFoe :: StoneGrid -> Move -> Bool
+thouShallHitButThyFoe grid (Move sourcePos targetPos) =
     fromPlayer /= toPlayer
     where
         fromPlayer = getPlayerXY grid sourcePos    
