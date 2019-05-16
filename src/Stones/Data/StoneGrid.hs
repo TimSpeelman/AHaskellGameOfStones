@@ -62,3 +62,11 @@ listStones grid = stones
         isStone (_, _) = False
         stones' = filter isStone elems
         stones = map (\(xy, (CellS s)) -> (xy, s)) stones'
+
+listPlayers :: StoneGrid -> [Player]
+listPlayers grid = players
+    where
+        players = unique $ map toPlayer (listStones grid)
+        toPlayer :: StoneXY -> Player
+        toPlayer (_, Stone p) = (Player p)  
+        unique = reverse . nub . reverse

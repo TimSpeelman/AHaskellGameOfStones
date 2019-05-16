@@ -14,3 +14,10 @@ nextTurn (Game player players grid) = game'
         nextPlayer = players !! nextIndex
         game' = Game nextPlayer players grid
         
+winner :: Game -> Maybe Player
+winner (Game _ _ grid) = w
+    where
+        players = listPlayers grid
+        w = if (length players) == 1
+                then Just $ players !! 0
+                else Nothing
