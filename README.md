@@ -13,7 +13,7 @@ An example 3-by-4 game with two players starts out like this:
 
 The game is not player by humans, but by 'bots' operating in the form of a strategy. An example strategy is [Aggressive](./src/Stones/Strategy/Aggressive.hs) which finds the nearest enemy stone and moves towards that.
 
-The objective for us humans is to code the best strategy.
+The objective for us humans is to code the best strategy that [obeys the Laws](./src/Stones/Laws.hs).
 
 ## Running the game
 Use `stack build --exec AHaskellGameOfStones-exe` to run the game.
