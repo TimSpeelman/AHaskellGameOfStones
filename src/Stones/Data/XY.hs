@@ -1,17 +1,19 @@
-module Stones.Data.XY
-   where
+module Stones.Data.XY where
 
 -- This needs vector arithmetic! Don't implement by yourself!
 
 data XY = XY Int Int deriving (Show, Eq)
 
-offset :: XY -> XY -> XY
-offset (XY x0 y0) (XY x1 y1) = XY dx dy
-    where
-        dx = x1 - x0
-        dy = y1 - y0
-    
+instance Num XY where
+    (+) (XY x y) (XY x' y') = (XY (x + x') (y + y'))
+    (-) (XY x y) (XY x' y') = (XY (x - x') (y - y'))
+    (*) (XY x y) (XY x' y') = (XY (x * x') (y * y'))
+    negate (XY x y) = (XY (-x) (-y))
+    abs (XY x y) = (XY (abs x) (abs y))
+    signum (XY x y) = (XY (signum x) (signum y))
+    -- Required for Num class but doesn't really make sense?
+    fromInteger i = (XY i' i') where i' = fromInteger i
+
 distanceSquared :: XY -> XY -> Int
-distanceSquared xy0 xy1 = dx ^ 2 + dy ^ 2
-    where
-        (XY dx dy) = offset xy0 xy1
+distanceSquared a b = dx ^ 2 + dy ^ 2 
+    where (XY dx dy) = b - a

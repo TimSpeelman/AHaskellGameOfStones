@@ -27,3 +27,10 @@ setAt xs i x = take i xs ++ [x] ++ drop (i + 1) xs
         
 join :: String -> [String] -> String
 join sep xs = foldr (\a b-> a ++ if b=="" then b else sep ++ b) "" xs
+
+allPairs :: [a] -> [b] -> [(a, b)]
+allPairs as bs = pairs
+    where
+        f = (\a -> map (\b -> (a, b)) bs)
+        p = map f as 
+        pairs = concat p
