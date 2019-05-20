@@ -50,8 +50,14 @@ askNextMove game@(Game player players grid)
     where 
         -- TODO: Make this strategy a parameter per player
         -- move = stgyWolfPack player grid
-        move = stgyAggressive player grid
+        move = pickStrategy player grid
         unp (Just x) = x
+
+-- Temporary solution: replace this by the user selecting the strategies in the CLI
+pickStrategy :: Player -> StoneGrid -> Maybe Move
+pickStrategy p@(Player 1) = stgyAggressive p
+pickStrategy p@(Player 2) = stgyAggressive p
+
 
 makeNextMove :: Game -> Move -> IO()
 makeNextMove game@(Game player players grid) move = do
