@@ -70,3 +70,20 @@ listPlayers grid = players
         toPlayer :: StoneXY -> Player
         toPlayer (_, Stone p) = (Player p)  
         unique = reverse . nub . reverse
+
+stonesOfPlayer :: Player -> StoneGrid -> [StoneXY]
+stonesOfPlayer (Player player) grid = stones
+    where
+        allStones :: [(XY, Stone)]
+        allStones = listStones grid
+        isMine = \(xy, (Stone p)) -> p == player
+        stones = filter isMine allStones
+        
+stonesOfEnemyOf :: Player -> StoneGrid -> [StoneXY]
+stonesOfEnemyOf (Player player) grid = stones
+    where
+        allStones :: [(XY, Stone)]
+        allStones = listStones grid
+        isEnemy = \(xy, (Stone p)) -> p /= player
+        stones = filter isEnemy allStones
+        

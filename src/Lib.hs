@@ -7,6 +7,7 @@ import Stones.Data.XY
 import Stones.UI.CLI
 import Stones.Data.Game
 import Stones.Strategy.Aggressive
+import Stones.Strategy.WolfPack
 
 dummyGame :: Game
 dummyGame = Game firstPlayer players grid
@@ -43,11 +44,14 @@ verifyWinner game
 
 askNextMove :: Game -> IO()
 askNextMove game@(Game player players grid)
-    | isLawful grid player move = makeNextMove game move
+    | move == Nothing = putStrLn $ (show player) ++ " seems to be out of options.."
+    | isLawful grid player (unp move) = makeNextMove game (unp move)
     | otherwise = putStrLn $ "Treason! " ++ (show player) ++ " shall hang for this"
     where 
         -- TODO: Make this strategy a parameter per player
+        -- move = stgyWolfPack player grid
         move = stgyAggressive player grid
+        unp (Just x) = x
 
 makeNextMove :: Game -> Move -> IO()
 makeNextMove game@(Game player players grid) move = do

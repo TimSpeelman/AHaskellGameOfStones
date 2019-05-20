@@ -1,5 +1,6 @@
 module Stones.Util
     where
+import Data.List
 
 mapWithIndex :: (Int -> a -> b) -> [a] -> [b]
 mapWithIndex f as = bs
@@ -29,8 +30,19 @@ join :: String -> [String] -> String
 join sep xs = foldr (\a b-> a ++ if b=="" then b else sep ++ b) "" xs
 
 allPairs :: [a] -> [b] -> [(a, b)]
-allPairs as bs = pairs
+allPairs as bs = (,) <$> as <*> bs
+
+minSuchThat :: (Eq a, Ord b) => (a -> b) -> [a] -> a
+minSuchThat f as = a
     where
-        f = (\a -> map (\b -> (a, b)) bs)
-        p = map f as 
-        pairs = concat p
+        ords = map f as
+        min = minimum ords
+        (Just a) = find (\x -> (f x) == min) as
+
+maxSuchThat :: (Eq a, Ord b) => (a -> b) -> [a] -> Maybe a
+maxSuchThat f as = find isMax as
+    where
+        ords = map f as
+        max = maximum ords
+        isMax = (\x -> (f x) == max)
+        
