@@ -18,8 +18,8 @@ gridToStr :: StoneGrid -> String
 gridToStr (Grid cells) = text
     where
         texts = (fmap . fmap) cellToStr cells
-        lines = fmap (join " ") texts
-        text = join "\n" lines
+        lines = fmap (joinStr " ") texts
+        text = joinStr "\n" lines
 
 cellToStr :: CellV -> String
 cellToStr EmptyCell = "-"

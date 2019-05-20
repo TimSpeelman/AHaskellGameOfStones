@@ -3,22 +3,31 @@ import Stones.Data.StoneGrid
 import Stones.Data.XY
 import Stones.Data.Grid
 import Stones.Laws
+import Stones.Data.Move
+import Stones.Strategy.WolfPack
 
 main :: IO ()
 main = hspec $ do
+    (
+        describe "WolfPack" $ do
+        ( it "movesToward" $ do 
+            movesToward' [] (XY 0 0) (XY 2 0) `shouldBe` Just (XY 1 0)
+            
+            )
+        )
     ( describe "Make Grid" $ do
         ( it "makes an empty 1x2 grid" $ do
             gridWH 2 1 `shouldBe` Grid [
-                    [Cell Nothing, Cell Nothing]
+                    [EmptyCell, EmptyCell]
                 ] )
         ( it "makes an empty 2x1 grid" $ do
             gridWH 1 2 `shouldBe` Grid [
-                    [Cell Nothing],
-                    [Cell Nothing]
+                    [EmptyCell],
+                    [EmptyCell]
                 ] )
         ( it "makes a filled grid" $ do
             gridFromLists [[1, 2, 0]] `shouldBe` Grid [
-                    [Cell (Just 1), Cell (Just 2), Cell Nothing]
+                    [CellS (Stone 1), CellS (Stone 2), EmptyCell]
                 ] )
         )
     ( describe "Access Grid" $ do 
@@ -33,8 +42,8 @@ main = hspec $ do
             inBounds empty2x1Grid (XY 0 2) `shouldBe` False
             )
         ( it "provides safe access inside"  $ do
-            safeGetXY empty2x1Grid (XY 0 0) `shouldBe` (Just (Cell Nothing))
-            safeGetXY empty2x1Grid (XY 0 1) `shouldBe` (Just (Cell Nothing))
+            safeGetXY empty2x1Grid (XY 0 0) `shouldBe` (Just (EmptyCell))
+            safeGetXY empty2x1Grid (XY 0 1) `shouldBe` (Just (EmptyCell))
             )
         ( it "provides safe access outside"  $ do
             safeGetXY empty2x1Grid (XY 0 (-1)) `shouldBe` Nothing
@@ -44,13 +53,13 @@ main = hspec $ do
             )
         ( it "sets a new cell value"  $ do
             setPlayerXY empty2x1Grid 1 (XY 0 0) `shouldBe` (Grid [
-                    [Cell (Just 1)],
-                    [Cell Nothing]
+                    [CellS (Stone 1)],
+                    [EmptyCell]
                 ])
             )
         ( it "clears a cell"  $ do
             clearCell grid2x1StartLeft (XY 0 0) `shouldBe` (Grid [
-                    [Cell Nothing], [Cell Nothing]
+                    [EmptyCell], [EmptyCell]
                 ])
             )
         )

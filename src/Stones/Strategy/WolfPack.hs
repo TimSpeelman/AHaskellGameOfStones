@@ -8,6 +8,8 @@ import Data.List
 import Stones.Util
 import Stones.Data.Pathfinding
 import Data.Maybe
+import Stones.Laws
+import Control.Monad
 
 stgyWolfPack :: Player -> StoneGrid -> Maybe Move
 stgyWolfPack player grid = move
@@ -30,6 +32,9 @@ stgyWolfPack player grid = move
         -- Construct the move, if available
         toMove (myPos, nextPos, _) = Move myPos nextPos
         move = fmap toMove farthest
+
+firstLawfulMove :: StoneGrid -> Player -> [Move] -> Maybe Move
+firstLawfulMove grid player moves = find (isLawful grid player) moves
 
 -- Move from a to b, omitting a list of XYs
 movesToward :: [XY] -> XY -> XY -> Maybe (XY, XY, XY)

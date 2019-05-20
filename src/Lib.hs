@@ -7,6 +7,7 @@ import Stones.Data.XY
 import Stones.UI.CLI
 import Stones.Data.Game
 import Stones.Strategy.Aggressive
+import Stones.Strategy.NonSuicidalAggressive
 import Stones.Strategy.WolfPack
 
 dummyGame :: Game
@@ -21,6 +22,8 @@ dummyGame = Game firstPlayer players grid
                 ]
         players = listPlayers grid
         firstPlayer = players !! 0
+
+(Game p ps g) = dummyGame
 
 demoGame :: IO ()
 demoGame = do
@@ -55,8 +58,8 @@ askNextMove game@(Game player players grid)
 
 -- Temporary solution: replace this by the user selecting the strategies in the CLI
 pickStrategy :: Player -> StoneGrid -> Maybe Move
-pickStrategy p@(Player 1) = stgyAggressive p
 pickStrategy p@(Player 2) = stgyAggressive p
+pickStrategy p@(Player 1) = stgyNonSuicidalAggressive p
 
 
 makeNextMove :: Game -> Move -> IO()
