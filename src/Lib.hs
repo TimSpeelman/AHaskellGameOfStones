@@ -15,8 +15,14 @@ import Stones.Scenario.GenerateGames
 import System.IO
 import System.Console.Pretty 
 
+-- Temporary solution: replace this by the user selecting the strategies in the CLI
+pickStrategy :: Player -> StoneGrid -> Maybe Move
+pickStrategy p@(Player 2) = stgyNonSuicidalAggressive p
+pickStrategy p@(Player 1) = stgyNonSuicidalAggressive p
+
+
 dummyGame :: Int -> Int -> Int ->Game
-dummyGame w h numRows  =newGame players grid
+dummyGame w h numRows  = newGame players grid (StrategyPicker pickStrategy)
     where       
         grid = multiRowDuel numRows $ gridWH w h 
         players = listPlayers grid

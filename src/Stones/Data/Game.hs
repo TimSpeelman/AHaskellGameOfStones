@@ -1,29 +1,14 @@
-{-#  LANGUAGE TypeSynonymInstances #-}
 module Stones.Data.Game
     where
---  (
---         Game,
---         getCurrentPlayerIndex,
---         countPlayers,
---         getPlayer,
---         getPlayerList,
---         getGrid,
---         nextTurn,
---         winner
---     ) where 
-import Stones.Data.StoneGrid
+
 import Data.List
+import Stones.Data.StoneGrid
 import Stones.Laws
 import Stones.Data.Move
 import Stones.Strategy.Aggressive
 import Stones.Strategy.NonSuicidalAggressive
--- data Game = Game Player [Player] StoneGrid deriving (Eq, Show)   
 
-
-data StrategyPicker = StrategyPicker (Player -> StoneGrid -> Maybe Move) 
-instance Show StrategyPicker where
-    show s = "StrategyPicker"
-
+-- The Game object holds all relevant game state
 data Game = Game {
         getRound :: Int,
         getPlayer :: Player,
@@ -31,25 +16,32 @@ data Game = Game {
         getGrid :: StoneGrid,
         getStatus :: GameStatus,
         getMoves :: [(Player, Move)],
-        getStrategy :: StrategyPicker -- Player -> StoneGrid -> Maybe Move
+        getStrategy :: StrategyPicker
     } deriving (Show)  
+
+-- We can pass a function into the game which decides the strategy a given player assumes
+data StrategyPicker = StrategyPicker (Player -> StoneGrid -> Maybe Move) 
+instance Show StrategyPicker where
+    show s = "StrategyPicker"
 
 data GameStatus = 
     GamePlaying
     | GameFoul Violation
     | GameWon Player deriving (Eq, Show)
     
-newGame :: [Player] -> StoneGrid -> Game
-newGame players grid = Game {
+newGame :: [Player] -> StoneGrid -> StrategyPicker -> Game
+newGame players grid stgyPicker = Game {
         getRound = 0,
         getPlayer = players !! 0,
         getPlayerList = players,
         getGrid = grid,
         getStatus = GamePlaying,
-        getStrategy = StrategyPicker (pickStrategy),
+        getStrategy = stgyPicker,
         getMoves = []
     }
-
+    
+-- The game only iterates when it's playing.
+--   Can/should we make Game an iterable?
 nextGameIteration :: Game -> Game
 nextGameIteration g = case (getStatus g) of
     GamePlaying -> submitMove g $ getNextMove g
@@ -62,6 +54,7 @@ getNextMove game = strategy (getGrid game)
         StrategyPicker pickStgy = getStrategy game
         strategy = pickStgy (getPlayer game) 
 
+-- Submit a move, will perform when it's valid
 submitMove :: Game -> Maybe Move -> Game
 submitMove game move = case violation of
     Nothing -> performMove game $ unp move
@@ -70,9 +63,11 @@ submitMove game move = case violation of
     violation = validateLawful (getGrid game) (getPlayer game) move
     unp (Just x) = x
 
+-- When a player violated the law, quit the game.
 quitByViolation :: Game -> Violation -> Game
 quitByViolation g v = g { getStatus = GameFoul v }
 
+-- Perform a move, assuming it is lawful.
 performMove :: Game -> Move -> Game
 performMove game move = finishTurn game'
     where    
@@ -82,26 +77,16 @@ performMove game move = finishTurn game'
         moves = getMoves game
         game' = game { getGrid = grid', getMoves = moves ++ [(player, move)] }
 
+-- When the turn is finished, check for a winner, otherwise go to next turn.
 finishTurn :: Game -> Game 
-finishTurn = updateStatus . nextTurn
+finishTurn = checkForWinner . nextTurn
 
--- appendMove :: Game -> Player -> Move -> Game
--- appendMove game player move = game { getMoves = moves }
---     where
---         moves' = (getMoves game)
---         moves = moves ++ [(player, move)]
-
--- Temporary solution: replace this by the user selecting the strategies in the CLI
-pickStrategy :: Player -> StoneGrid -> Maybe Move
-pickStrategy p@(Player 2) = stgyNonSuicidalAggressive p
-pickStrategy p@(Player 1) = stgyNonSuicidalAggressive p
-
-getCurrentPlayerIndex :: Game -> Maybe Int
-getCurrentPlayerIndex game = findIndex (\p -> p == getPlayer game) (getPlayerList game)
-
-countPlayers :: Game -> Int
-countPlayers game = length $ getPlayerList game
-
+-- When only one player has stones left, he has won.
+checkForWinner :: Game -> Game
+checkForWinner game = case lastManStanding (getGrid game) of
+    Nothing -> game
+    Just p -> game { getStatus = GameWon p }
+ 
 nextTurn :: Game -> Game
 nextTurn game = game { getPlayer = nextPlayer, getRound = nextRound }
     where
@@ -109,36 +94,10 @@ nextTurn game = game { getPlayer = nextPlayer, getRound = nextRound }
         nextIndex = (currIndex + 1) `mod` (countPlayers game)
         nextPlayer = (getPlayerList game) !! nextIndex
         nextRound = 1 + getRound game
-
--- nextTurn :: Game -> Game
--- nextTurn (Game player players grid) = game'
---     where
---         (Just currIndex) = findIndex (\p -> p == player) players
---         nextIndex = (currIndex + 1) `mod` (length players)
---         nextPlayer = players !! nextIndex
---         game' = Game nextPlayer players grid
         
--- winner :: Game -> Maybe Player
--- winner (Game _ _ grid) = w
---     where
---         players = listPlayers grid
---         w = if (length players) == 1
---                 then Just $ players !! 0
---                 else Nothing
-        
-winner :: Game -> Maybe Player
-winner game = case (getStatus game) of
-    GameWon p -> Just p
-    GamePlaying -> Nothing
+getCurrentPlayerIndex :: Game -> Maybe Int
+getCurrentPlayerIndex game = findIndex (\p -> p == getPlayer game) (getPlayerList game)
 
-updateStatus :: Game -> Game
-updateStatus game = case lastManStanding game of
-    Nothing -> game
-    Just p -> game { getStatus = GameWon p }
-  
-lastManStanding :: Game -> Maybe Player
-lastManStanding game
-  | length p > 1 = Nothing
-  | otherwise = Just $ (p !! 0)
-    where 
-        p = listPlayers $ getGrid game
+countPlayers :: Game -> Int
+countPlayers game = length $ getPlayerList game
+    

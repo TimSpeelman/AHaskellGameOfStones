@@ -86,4 +86,11 @@ stonesOfEnemyOf (Player player) grid = stones
         allStones = listStones grid
         isEnemy = \(xy, (Stone p)) -> p /= player
         stones = filter isEnemy allStones
+
+lastManStanding :: StoneGrid -> Maybe Player
+lastManStanding grid
+    | length p > 1 = Nothing
+    | otherwise = Just $ (p !! 0)
+    where 
+        p = listPlayers grid
         
