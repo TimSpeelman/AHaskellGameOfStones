@@ -12,15 +12,10 @@ import Stones.Strategy.WolfPack
 import Stones.Scenario.GenerateGames
 
 dummyGame :: Game
-dummyGame = Game { 
-        getPlayer = firstPlayer,
-        getPlayerList = players,
-        getGrid = grid
-    }
+dummyGame = newGame players grid
     where       
         grid = multiRowDuel 2 $ gridWH 3 6
         players = listPlayers grid
-        firstPlayer = players !! 0
 
 p = getPlayer dummyGame
 g = getGrid dummyGame

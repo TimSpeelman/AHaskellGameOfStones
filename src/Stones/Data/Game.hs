@@ -23,6 +23,13 @@ data Game = Game {
         getGrid :: StoneGrid
     } deriving (Eq, Show)  
     
+newGame :: [Player] -> StoneGrid -> Game
+newGame players grid = Game {
+        getPlayer = players !! 0,
+        getPlayerList = players,
+        getGrid = grid
+    }
+
 getNextMove :: Game -> Maybe Move
 getNextMove game = pickStrategy (getPlayer game) (getGrid game)
 
