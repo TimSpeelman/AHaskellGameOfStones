@@ -1,6 +1,8 @@
 module Stones.Laws
     (
-        isLawful
+        Violation, 
+        isLawful,
+        validateLawful
     ) where
         
 import Stones.Data.Grid
@@ -8,12 +10,25 @@ import Stones.Data.StoneGrid
 import Stones.Data.XY
 import Stones.Data.Move
 
+data Violation = 
+    NoMoveViolation
+    | TakeButOneStepViolation
+    | MoveButThyselfViolation
+    | NotWanderViolation
+    | HitButThyFoeViolation
+    deriving (Eq, Show)
+
 isLawful :: StoneGrid -> Player -> Move -> Bool
-isLawful grid player move =
-    thouShallTakeButOneStep move &&
-    thouShallMoveButThyself grid player move &&
-    thouShallNotWander grid move &&
-    thouShallHitButThyFoe grid move
+isLawful g p m = validateLawful g p (Just m) == Nothing
+
+validateLawful :: StoneGrid -> Player -> Maybe Move -> Maybe Violation
+validateLawful grid player Nothing = Just $ NoMoveViolation
+validateLawful grid player (Just move)
+  | not $ thouShallTakeButOneStep move = Just $ TakeButOneStepViolation
+  | not $ thouShallMoveButThyself grid player move = Just $ MoveButThyselfViolation
+  | not $ thouShallNotWander grid move = Just $ NotWanderViolation
+  | not $ thouShallHitButThyFoe grid move = Just $ HitButThyFoeViolation
+  | otherwise = Nothing
 
 thouShallTakeButOneStep :: Move -> Bool
 thouShallTakeButOneStep (Move sourcePos targetPos) =

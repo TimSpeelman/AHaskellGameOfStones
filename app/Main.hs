@@ -3,4 +3,4 @@ module Main where
 import Lib
 
 main :: IO ()
-main = demoGame
+main = demoGame 10 10 2

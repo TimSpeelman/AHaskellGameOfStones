@@ -10,52 +10,48 @@ import Stones.Strategy.Aggressive
 import Stones.Strategy.NonSuicidalAggressive
 import Stones.Strategy.WolfPack
 import Stones.Scenario.GenerateGames
+import System.IO
 
-dummyGame :: Game
-dummyGame = newGame players grid
+dummyGame :: Int -> Int -> Int ->Game
+dummyGame w h numRows  =newGame players grid
     where       
-        grid = multiRowDuel 2 $ gridWH 3 6
+        grid = multiRowDuel numRows $ gridWH w h 
         players = listPlayers grid
 
-p = getPlayer dummyGame
-g = getGrid dummyGame
+p = getPlayer $ dummyGame 10 10 2
+g = getGrid $ dummyGame 10 10 2
 
-demoGame :: IO ()
-demoGame = do
+demoGame :: Int -> Int -> Int -> IO ()
+demoGame w h numRows = do
+    hSetBuffering stdout $ BlockBuffering Nothing
     clearCLI
     putStrLn "Welcome to a Haskell Game of Stones, press enter.."
-    showGame dummyGame
+    showGame $ dummyGame w h numRows
 
 showGame :: Game -> IO()
 showGame game = do
-    printGrid $ getGrid game
-    putStrLn "Press enter to continue.."
-    getLine
-    verifyWinner game
-
-verifyWinner :: Game -> IO()
-verifyWinner game 
-    | win /= Nothing = putStrLn $ "We have a winner! " ++ (show win)
-    | otherwise = askNextMove game
-    where
-        win = winner game
-
-askNextMove :: Game -> IO()
-askNextMove game
-    | ( move == Nothing ) = putStrLn $ (show player) ++ " seems to be out of options.."
-    | ( isLawful grid player (unp move) ) = makeNextMove game (unp move)
-    | ( otherwise ) = putStrLn $ "Treason! " ++ (show player) ++ " shall hang for this"
-    where 
-        player = getPlayer game
-        grid = getGrid game
-        move = getNextMove game
-        unp (Just x) = x
-
-makeNextMove :: Game -> Move -> IO()
-makeNextMove game move = do
     clearCLI
-    putStrLn ( (show player) ++ ": " ++ (show move) )
-    showGame game'
-    where 
-        player = getPlayer game
-        game' = makeGameMove game move
+    foldMap putStrLn ( moveToStr <$> (take 5 . reverse $ getMoves game) )
+    putStrLn ""
+    printGrid $ getGrid game
+    putStrLn ""
+    putStrLn $ getGameStatus game
+    hFlush stdout
+    getLine
+    nextGameStep game
+
+moveToStr :: (Player, Move) -> String
+moveToStr (player, move) = (show player) ++ ": " ++ (show move)
+
+nextGameStep :: Game -> IO()
+nextGameStep game = case (getStatus game) of
+    (GamePlaying) -> showGame $ nextGameIteration game
+    (GameFoul _) -> return ()
+    (GameWon _) -> return () 
+
+getGameStatus :: Game -> String
+getGameStatus game = case (getStatus game) of
+    (GamePlaying) -> "Press enter to continue.."
+    (GameFoul v) -> "Foul play! " ++ (show v)
+    (GameWon win) -> "We have a winner! " ++ (show win)
+    

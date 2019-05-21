@@ -34,12 +34,12 @@ stgyNonSuicidalAggressive player grid = move
             ++ kamikaze
             ++ randomNonSuicidal
             ++ closestSuicidal
-        lawfulAlternatives = fmap (validateLawful grid player) alternatives
+        lawfulAlternatives = fmap (validateIsLawful grid player) alternatives
         move = join $ find (\x -> x /= Nothing) lawfulAlternatives
 
-validateLawful :: StoneGrid -> Player -> Maybe Move -> Maybe Move
-validateLawful grid player Nothing = Nothing
-validateLawful grid player (Just move)
+validateIsLawful :: StoneGrid -> Player -> Maybe Move -> Maybe Move
+validateIsLawful grid player Nothing = Nothing
+validateIsLawful grid player (Just move)
     | isLawful grid player move = Just move
     | otherwise = Nothing
 
