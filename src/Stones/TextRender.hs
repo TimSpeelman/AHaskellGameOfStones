@@ -1,20 +1,21 @@
-module Stones.UI.CLI
+module Stones.TextRender
     where   
 import Stones.Util
 import Stones.Data.Grid
 import Stones.Data.Move
+import Stones.Data.Game
 import Stones.Data.StoneGrid
-import System.Console.ANSI ( clearScreen )
 import System.Console.Pretty 
 
-printGrid :: StoneGrid -> IO()
-printGrid grid = 
-    putStrLn (gridToStr grid)
-    
-
-clearCLI :: IO()
-clearCLI =
-    clearScreen
+drawGame :: Game -> String
+drawGame game =
+    ( color Red $ "Round " ++ ( show $ getRound game ) )
+    ++ "\n\n" ++ 
+    ( foldMap (\x -> x ++ "\n") ( moveToStr <$> (take 5 . reverse $ getMoves game) ) )
+    ++ "\n" ++
+    ( gridToStr $ getGrid game )
+    ++ "\n\n" ++ 
+    ( getGameStatus game )
 
 gridToStr :: StoneGrid -> String
 gridToStr (Grid cells) = text
@@ -40,3 +41,10 @@ playerColor :: Player -> Color
 playerColor (Player 1) = Red
 playerColor (Player 2) = Blue
 playerColor _ = Yellow
+
+getGameStatus :: Game -> String
+getGameStatus game = case (getStatus game) of
+    (GamePlaying) -> "Press enter to continue.."
+    (GameFoul v) -> "Foul play! " ++ (show v)
+    (GameWon win) -> "We have a winner! " ++ (show win)
+    
