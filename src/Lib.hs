@@ -10,6 +10,7 @@ import Stones.Data.Game
 import Stones.Strategy.Aggressive
 import Stones.Strategy.NonSuicidalAggressive
 import Stones.Strategy.WolfPack
+import Stones.Strategy.All
 import Stones.Scenario.GenerateGames
 
 import System.IO
@@ -17,8 +18,8 @@ import System.Console.Pretty
 
 -- Temporary solution: replace this by the user selecting the strategies in the CLI
 pickStrategy :: Player -> StoneGrid -> Maybe Move
-pickStrategy p@(Player 2) = stgyNonSuicidalAggressive p
-pickStrategy p@(Player 1) = stgyNonSuicidalAggressive p
+pickStrategy p@(Player 2) = stgyNonSuicidalAggressiveFun p
+pickStrategy p@(Player 1) = stgyNonSuicidalAggressiveFun p
 
 dummyGame :: Int -> Int -> Int ->Game
 dummyGame w h numRows  = newGame players grid (StrategyPicker pickStrategy)

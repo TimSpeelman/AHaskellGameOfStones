@@ -7,6 +7,7 @@ import System.Console.ANSI ( clearScreen )
 import System.IO
 import Stones.Data.Game
 import Stones.TextRender
+import Stones.Strategy.All
 
 runInteractiveGameOnCLI :: Game -> IO()
 runInteractiveGameOnCLI game = do

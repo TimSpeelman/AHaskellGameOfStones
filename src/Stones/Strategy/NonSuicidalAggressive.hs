@@ -10,11 +10,18 @@ import Stones.Data.Pathfinding
 import Control.Monad
 import Data.Maybe
 import Stones.Laws
+import Stones.Data.Strategy
+
+stgyNonSuicidalAggressive = Strategy {
+        getName = "Non-Suicidal Aggressive",
+        getDescription = "Tries to fight without getting hurt.",
+        getFunction = StgyFun stgyNonSuicidalAggressiveFun    
+    }
 
 -- The Non-Suicidal Aggressive Strategy depends on four "tactics".
 -- It will pick the first valid move that these tactics return.
-stgyNonSuicidalAggressive :: Player -> StoneGrid -> Maybe Move
-stgyNonSuicidalAggressive player grid = move
+stgyNonSuicidalAggressiveFun :: Player -> StoneGrid -> Maybe Move
+stgyNonSuicidalAggressiveFun player grid = move
     where
         myPositions = map fst $ stonesOfPlayer player grid
         theirPositions = map fst $ stonesOfEnemyOf player grid
