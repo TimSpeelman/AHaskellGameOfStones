@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Lib
     where
 import Stones.Laws
@@ -10,7 +11,9 @@ import Stones.Strategy.Aggressive
 import Stones.Strategy.NonSuicidalAggressive
 import Stones.Strategy.WolfPack
 import Stones.Scenario.GenerateGames
+
 import System.IO
+import System.Console.Pretty 
 
 dummyGame :: Int -> Int -> Int ->Game
 dummyGame w h numRows  =newGame players grid
@@ -31,7 +34,7 @@ demoGame w h numRows = do
 showGame :: Game -> IO()
 showGame game = do
     clearCLI
-    putStrLn $ "Round " ++ ( show $ getRound game )
+    putStrLn $ ( color Red $ "Round " ++ ( show $ getRound game ) )
     putStrLn ""
     foldMap putStrLn ( moveToStr <$> (take 5 . reverse $ getMoves game) )
     putStrLn ""
@@ -41,9 +44,6 @@ showGame game = do
     hFlush stdout
     getLine
     nextGameStep game
-
-moveToStr :: (Player, Move) -> String
-moveToStr (player, move) = (show player) ++ ": " ++ (show move)
 
 nextGameStep :: Game -> IO()
 nextGameStep game = case (getStatus game) of
