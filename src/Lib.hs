@@ -12,13 +12,18 @@ import Stones.Strategy.WolfPack
 import Stones.Scenario.GenerateGames
 
 dummyGame :: Game
-dummyGame = Game firstPlayer players grid
+dummyGame = Game { 
+        getPlayer = firstPlayer,
+        getPlayerList = players,
+        getGrid = grid
+    }
     where       
-        grid = multiRowDuel 3 $ gridWH 10 10
+        grid = multiRowDuel 2 $ gridWH 3 6
         players = listPlayers grid
         firstPlayer = players !! 0
 
-(Game p ps g) = dummyGame
+p = getPlayer dummyGame
+g = getGrid dummyGame
 
 demoGame :: IO ()
 demoGame = do
@@ -27,8 +32,8 @@ demoGame = do
     showGame dummyGame
 
 showGame :: Game -> IO()
-showGame game@(Game player players grid) = do
-    printGrid grid
+showGame game = do
+    printGrid $ getGrid game
     putStrLn "Press enter to continue.."
     getLine
     verifyWinner game
@@ -42,26 +47,20 @@ verifyWinner game
 
 askNextMove :: Game -> IO()
 askNextMove game@(Game player players grid)
-    | move == Nothing = putStrLn $ (show player) ++ " seems to be out of options.."
-    | isLawful grid player (unp move) = makeNextMove game (unp move)
-    | otherwise = putStrLn $ "Treason! " ++ (show player) ++ " shall hang for this"
+    | ( move == Nothing ) = putStrLn $ (show player) ++ " seems to be out of options.."
+    | ( isLawful grid player (unp move) ) = makeNextMove game (unp move)
+    | ( otherwise ) = putStrLn $ "Treason! " ++ (show player) ++ " shall hang for this"
     where 
-        -- TODO: Make this strategy a parameter per player
-        -- move = stgyWolfPack player grid
-        move = pickStrategy player grid
+        player = getPlayer game
+        grid = getGrid game
+        move = getNextMove game
         unp (Just x) = x
 
--- Temporary solution: replace this by the user selecting the strategies in the CLI
-pickStrategy :: Player -> StoneGrid -> Maybe Move
-pickStrategy p@(Player 2) = stgyNonSuicidalAggressive p
-pickStrategy p@(Player 1) = stgyNonSuicidalAggressive p
-
-
 makeNextMove :: Game -> Move -> IO()
-makeNextMove game@(Game player players grid) move = do
+makeNextMove game move = do
     clearCLI
     putStrLn ( (show player) ++ ": " ++ (show move) )
     showGame game'
     where 
-        grid' = makeMove grid move
-        game' = nextTurn (Game player players grid')
+        player = getPlayer game
+        game' = makeGameMove game move
