@@ -11,6 +11,8 @@ import Control.Monad
 import Data.Maybe
 import Stones.Laws
 
+-- The Non-Suicidal Aggressive Strategy depends on four "tactics".
+-- It will pick the first valid move that these tactics return.
 stgyNonSuicidalAggressive :: Player -> StoneGrid -> Maybe Move
 stgyNonSuicidalAggressive player grid = move
     where
@@ -19,9 +21,13 @@ stgyNonSuicidalAggressive player grid = move
         pair = closestPair $ allPairs myPositions theirPositions
         (myPos, theirPos) = pair
         nextPos = stepTowards myPos theirPos
+        -- Move the closest-to-the-enemy stone towards the enemy without commiting suicide
         closestNonSuicidal = fmap Just $ filter (not . (isSuicidal grid player)) (attackClosest grid player)
+        -- Kill the enemy stone within reach, allowing suicide
         kamikaze = [] -- TODO Implement 
+        -- Move any stone into a non-suicidal position
         randomNonSuicidal = [] -- TODO Implement
+        -- Move the closest-to-the-enemy into a suicidal position
         closestSuicidal = Just <$> attackClosest grid player
         alternatives :: [Maybe Move]
         alternatives = closestNonSuicidal
