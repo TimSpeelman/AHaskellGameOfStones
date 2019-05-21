@@ -41,7 +41,7 @@ verifyWinner game
         win = winner game
 
 askNextMove :: Game -> IO()
-askNextMove game@(Game player players grid)
+askNextMove game
     | ( move == Nothing ) = putStrLn $ (show player) ++ " seems to be out of options.."
     | ( isLawful grid player (unp move) ) = makeNextMove game (unp move)
     | ( otherwise ) = putStrLn $ "Treason! " ++ (show player) ++ " shall hang for this"
