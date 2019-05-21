@@ -31,6 +31,8 @@ demoGame w h numRows = do
 showGame :: Game -> IO()
 showGame game = do
     clearCLI
+    putStrLn $ "Round " ++ ( show $ getRound game )
+    putStrLn ""
     foldMap putStrLn ( moveToStr <$> (take 5 . reverse $ getMoves game) )
     putStrLn ""
     printGrid $ getGrid game

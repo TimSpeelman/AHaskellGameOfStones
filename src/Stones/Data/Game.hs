@@ -25,6 +25,7 @@ instance Show StrategyPicker where
     show s = "StrategyPicker"
 
 data Game = Game {
+        getRound :: Int,
         getPlayer :: Player,
         getPlayerList :: [Player],
         getGrid :: StoneGrid,
@@ -40,6 +41,7 @@ data GameStatus =
     
 newGame :: [Player] -> StoneGrid -> Game
 newGame players grid = Game {
+        getRound = 0,
         getPlayer = players !! 0,
         getPlayerList = players,
         getGrid = grid,
@@ -101,11 +103,12 @@ countPlayers :: Game -> Int
 countPlayers game = length $ getPlayerList game
 
 nextTurn :: Game -> Game
-nextTurn game = game { getPlayer = nextPlayer }
+nextTurn game = game { getPlayer = nextPlayer, getRound = nextRound }
     where
         (Just currIndex) = getCurrentPlayerIndex game
         nextIndex = (currIndex + 1) `mod` (countPlayers game)
         nextPlayer = (getPlayerList game) !! nextIndex
+        nextRound = 1 + getRound game
 
 -- nextTurn :: Game -> Game
 -- nextTurn (Game player players grid) = game'
