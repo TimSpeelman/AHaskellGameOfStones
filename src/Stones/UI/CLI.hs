@@ -23,4 +23,9 @@ gridToStr (Grid cells) = text
 
 cellToStr :: CellV -> String
 cellToStr EmptyCell = "-"
-cellToStr (CellS (Stone x)) = show x
+cellToStr (CellS (Stone x)) = format x
+    where
+        format :: Int -> String
+        format 1 = "X"
+        format 2 = "O"
+        format x = (show x) :: String

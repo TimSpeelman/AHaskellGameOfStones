@@ -9,17 +9,12 @@ import Stones.Data.Game
 import Stones.Strategy.Aggressive
 import Stones.Strategy.NonSuicidalAggressive
 import Stones.Strategy.WolfPack
+import Stones.Scenario.GenerateGames
 
 dummyGame :: Game
 dummyGame = Game firstPlayer players grid
     where       
-        grid = gridFromLists [
-                [1, 1, 1, 1],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [2, 2, 2, 2]
-                ]
+        grid = multiRowDuel 3 $ gridWH 10 10
         players = listPlayers grid
         firstPlayer = players !! 0
 
@@ -58,7 +53,7 @@ askNextMove game@(Game player players grid)
 
 -- Temporary solution: replace this by the user selecting the strategies in the CLI
 pickStrategy :: Player -> StoneGrid -> Maybe Move
-pickStrategy p@(Player 2) = stgyAggressive p
+pickStrategy p@(Player 2) = stgyNonSuicidalAggressive p
 pickStrategy p@(Player 1) = stgyNonSuicidalAggressive p
 
 

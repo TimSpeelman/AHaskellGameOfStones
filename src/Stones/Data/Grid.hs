@@ -15,6 +15,13 @@ inBounds (Grid cells) (XY x y) =
 getXY :: Grid a -> XY -> a
 getXY (Grid cells) (XY x y) = cells !! y !! x
 
+getHeight :: Grid a -> Int
+getHeight (Grid cells) = length cells
+
+getWidth :: Grid a -> Int
+getWidth (Grid []) = 0
+getWidth (Grid cells) = length $ cells !! 0
+
 safeGetXY :: Grid a -> XY -> Maybe a
 safeGetXY grid xy | inBounds grid xy = Just (getXY grid xy)
                   | otherwise        = Nothing
