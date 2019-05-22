@@ -27,6 +27,6 @@ dummyGame w h numRows  = newGame players grid (StrategyPicker pickStrategy)
         grid = multiRowDuel numRows $ gridWH w h 
         players = listPlayers grid
 
-demoGame :: Int -> Int -> Int -> IO ()
-demoGame w h numRows = do
-    runInteractiveGameOnCLI $ dummyGame w h numRows
+demoGame :: IO ()
+demoGame = do
+    createInteractiveGameOnCLI dummyGame
